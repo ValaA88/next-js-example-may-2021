@@ -1,5 +1,10 @@
 import { css } from '@emotion/react';
 import Link from 'next/link';
+import { useEffect, useState } from 'react';
+import {
+  getLocalStorageValue,
+  setLocalStorageValue,
+} from '../util/localStorage';
 
 const headerStyles = css`
   display: flex;
@@ -10,20 +15,44 @@ const headerStyles = css`
   a + a {
     margin-left: 15px;
   }
+
+  > div + div {
+    margin-left: auto;
+  }
 `;
 
 export default function Header() {
+  const [darkMode, setDarkMode] = useState();
+
+  // Set initial value (for client-side way of
+  // dealing with "Text content did not match"
+  // error)
+  useEffect(() => {
+    setDarkMode(getLocalStorageValue('darkMode'));
+  }, []);
+
+  useEffect(() => {
+    setLocalStorageValue('darkMode', darkMode);
+  }, [darkMode]);
+
   return (
     <header css={headerStyles}>
-      <Link href="/">
-        <a>Home</a>
-      </Link>
-      <Link href="/about">
-        <a>About</a>
-      </Link>
-      <Link href="/users">
-        <a>Users</a>
-      </Link>
+      <div>
+        <Link href="/">
+          <a>Home</a>
+        </Link>
+        <Link href="/about">
+          <a>About</a>
+        </Link>
+        <Link href="/users">
+          <a>Users</a>
+        </Link>
+      </div>
+      <div>
+        <button onClick={() => setDarkMode(!darkMode)}>
+          turn dark mode {darkMode ? 'off' : 'on'}
+        </button>
+      </div>
     </header>
   );
 }
