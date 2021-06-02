@@ -40,7 +40,9 @@ export async function getServerSideProps() {
   //
   // import { users } from '../../util/database';
 
-  const { users } = await import('../../util/database');
+  const { getUsers } = await import('../../util/database');
+
+  const users = await getUsers();
 
   // This console.log doesn't show up in the browser
   //

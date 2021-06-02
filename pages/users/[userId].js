@@ -73,11 +73,11 @@ export async function getServerSideProps(context) {
   const userId = context.query.userId;
   console.log('userId', userId);
 
-  console.log('cookies', context.req.cookies);
+  // console.log('cookies', context.req.cookies);
 
-  const { users } = await import('../../util/database');
+  const { getUserById } = await import('../../util/database');
 
-  const user = users.find((u) => u.id === userId);
+  const user = await getUserById(userId);
 
   return {
     props: {
