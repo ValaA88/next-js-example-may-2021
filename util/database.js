@@ -36,6 +36,10 @@ export async function getUsers() {
 }
 
 export async function getUserById(id) {
+  // Return undefined if userId is not parseable
+  // to an integer
+  if (isNaN(parseInt(id))) return undefined;
+
   const users = await sql`
     SELECT
       *
@@ -43,6 +47,44 @@ export async function getUserById(id) {
       users
     WHERE
       id = ${id}
+  `;
+  return users.map((user) => camelcaseKeys(user))[0];
+}
+
+export async function insertUser(firstName, lastName) {
+  const users = await sql`
+    INSERT INTO users
+      (first_name, last_name)
+    VALUES
+      (${firstName}, ${lastName})
+    RETURNING *
+  `;
+  return users.map((user) => camelcaseKeys(user))[0];
+}
+
+export async function updateUserById(userId, firstName, lastName) {
+  const users = await sql`
+    UPDATE
+      users
+    SET
+      first_name = ${firstName},
+      last_name = ${lastName}
+    WHERE
+      id = ${userId}
+    RETURNING *
+  `;
+  return users.map((user) => camelcaseKeys(user))[0];
+}
+
+export async function deleteUserById(id) {
+  if (isNaN(parseInt(id))) return undefined;
+
+  const users = await sql`
+    DELETE FROM
+      users
+    WHERE
+      id = ${id}
+    RETURNING *
   `;
   return users.map((user) => camelcaseKeys(user))[0];
 }
