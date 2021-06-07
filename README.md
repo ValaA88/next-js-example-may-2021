@@ -56,3 +56,13 @@ To reverse the last single migration, run:
 ```sh
 yarn migrate down
 ```
+
+## API Design
+
+Base URL (development): http://localhost:3000/api/
+
+1. Reading all users: `GET /users`
+2. Reading a single user: `GET /users/:id`
+3. Creating a new user: `POST /users`
+4. Updating a user: `PUT /users/:id`
+5. Deleting a user: `DELETE /users/:id`

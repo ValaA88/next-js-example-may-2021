@@ -11,6 +11,18 @@ export default function SingleUser(props) {
   console.log('props', props);
   const [following, setFollowing] = useState(props.following);
 
+  // Show message if user does not exist
+  if (!props.user) {
+    return (
+      <Layout>
+        <Head>
+          <title>User not found!</title>
+        </Head>
+        User not found
+      </Layout>
+    );
+  }
+
   return (
     <Layout>
       <Head>
@@ -81,7 +93,7 @@ export async function getServerSideProps(context) {
 
   return {
     props: {
-      user: user,
+      user: user || null,
       // Passing cookie values as props
       following: parseCookieValue(context.req.cookies.following, []),
       claps: parseCookieValue(context.req.cookies.claps, []),
