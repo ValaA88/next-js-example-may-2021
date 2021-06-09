@@ -12,12 +12,12 @@ export default function Users(props) {
         <title>Users</title>
       </Head>
 
-      <h1>Users</h1>
+      <h1 data-cy="users-page-h1">Users</h1>
       <ul>
         {props.users.map((user) => (
           <li key={`user-${user.id}`}>
             <Link href={`/users/${user.id}`}>
-              <a>
+              <a data-cy={`users-page-user-${user.id}`}>
                 {user.firstName} {user.lastName}
               </a>
             </Link>

@@ -17,6 +17,7 @@ export default function ReadAllUsers(props) {
         return (
           <div
             key={`user-${user.id}`}
+            data-cy={`users-management-read-page-user-${user.firstName}-${user.lastName}`}
             style={{
               padding: 10,
               border: '1px solid #666',

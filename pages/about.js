@@ -8,7 +8,7 @@ export default function About() {
         <title>About</title>
       </Head>
 
-      <div>About pagez</div>
+      <div data-cy="about-page-h1">About pagez</div>
     </Layout>
   );
 }

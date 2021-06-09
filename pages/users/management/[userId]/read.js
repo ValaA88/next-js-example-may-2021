@@ -22,9 +22,11 @@ export default function ReadSingleUser(props) {
         </title>
       </Head>
 
-      <h1>Read Page</h1>
+      <h1 data-cy="users-management-read-page-h1">Read Page</h1>
 
-      <div>id: {props.user.id}</div>
+      <div>
+        id: <span data-cy="users-management-read-page-id">{props.user.id}</span>
+      </div>
       <div>first_name: {props.user.firstName}</div>
       <div>last_name: {props.user.lastName}</div>
     </Layout>

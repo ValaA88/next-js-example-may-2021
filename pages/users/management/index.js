@@ -12,11 +12,11 @@ export default function CreateDontCopy() {
       <h1>User management page</h1>
 
       <Link href="/users/management/create">
-        <a>Create</a>
+        <a data-cy="users-management-create-link">Create</a>
       </Link>
       <br />
       <Link href="/users/management/read">
-        <a>Read</a>
+        <a data-cy="users-management-read-link">Read</a>
       </Link>
     </Layout>
   );

@@ -18,7 +18,8 @@ export default function SingleUser(props) {
         <Head>
           <title>User not found!</title>
         </Head>
-        User not found
+
+        <div data-cy="user-page-user-not-found">User not found</div>
       </Layout>
     );
   }
@@ -31,7 +32,7 @@ export default function SingleUser(props) {
         </title>
       </Head>
 
-      <h1>
+      <h1 data-cy={`user-page-user-${props.user.id}`}>
         {props.user.firstName} {props.user.lastName}
       </h1>
       <div>user id: {props.user.id}</div>

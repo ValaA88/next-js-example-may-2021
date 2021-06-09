@@ -16,26 +16,9 @@ export default function CreateSingleUser() {
 
       <h1>Create Page</h1>
 
-      <div>
-        <input
-          value={firstName}
-          onChange={(event) => {
-            setFirstName(event.currentTarget.value);
-          }}
-        />
-      </div>
-
-      <div>
-        <input
-          value={lastName}
-          onChange={(event) => {
-            setLastName(event.currentTarget.value);
-          }}
-        />
-      </div>
-
-      <button
-        onClick={async () => {
+      <form
+        onSubmit={async (event) => {
+          event.preventDefault();
           const response = await fetch(`/api/users`, {
             method: 'POST',
             headers: {
@@ -53,8 +36,28 @@ export default function CreateSingleUser() {
           router.push(`/users/management/${createdUser.id}/read`);
         }}
       >
-        Create User
-      </button>
+        <div>
+          <input
+            data-cy="users-management-create-first-name"
+            value={firstName}
+            onChange={(event) => {
+              setFirstName(event.currentTarget.value);
+            }}
+          />
+        </div>
+
+        <div>
+          <input
+            data-cy="users-management-create-last-name"
+            value={lastName}
+            onChange={(event) => {
+              setLastName(event.currentTarget.value);
+            }}
+          />
+        </div>
+
+        <button>Create User</button>
+      </form>
     </Layout>
   );
 }

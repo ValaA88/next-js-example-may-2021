@@ -42,10 +42,10 @@ export default function Header() {
           <a>Home</a>
         </Link>
         <Link href="/about">
-          <a>About</a>
+          <a data-cy="header-about-link">About</a>
         </Link>
         <Link href="/users">
-          <a>Users</a>
+          <a data-cy="header-users-link">Users</a>
         </Link>
       </div>
       <div>
