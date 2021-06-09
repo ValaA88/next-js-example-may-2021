@@ -2,6 +2,10 @@ const users = [
   { first_name: 'Karl', last_name: 'Horky' },
   { first_name: 'Janos', last_name: 'Spanyol' },
   { first_name: 'Nicolas', last_name: 'Gadner' },
+  { first_name: 'Nicolas', last_name: 'Gadner' },
+  { first_name: 'Nicolas', last_name: 'Gadner' },
+  { first_name: 'Nicolas', last_name: 'Gadner' },
+  { first_name: 'Nicolas', last_name: 'Gadner' },
 ];
 
 exports.up = async function up(sql) {
