@@ -6,7 +6,7 @@ import {
 } from '../util/localStorage';
 
 export default function EasterEgg() {
-  const [easterEggLocalstorage, setEasterEggLocalstorage] = useState();
+  const [easterEggLocalstorage, setEasterEggLocalstorage] = useState<string>();
 
   useEffect(() => {
     setEasterEggLocalstorage(getLocalStorageValue('easterEgg'));

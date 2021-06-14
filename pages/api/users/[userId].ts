@@ -1,13 +1,18 @@
+import { NextApiRequest, NextApiResponse } from 'next';
+import { convertQueryValue } from '../../../util/context';
 import {
   deleteUserById,
   getUserById,
   updateUserById,
 } from '../../../util/database';
 
-export default async function SingleUser(req, res) {
+export default async function SingleUser(
+  req: NextApiRequest,
+  res: NextApiResponse,
+) {
   console.log('HTTP Method (aka verb)', req.method);
 
-  const userId = req.query.userId;
+  const userId = convertQueryValue(req.query.userId);
 
   if (req.method === 'GET') {
     const user = await getUserById(userId);

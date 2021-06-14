@@ -1,5 +1,6 @@
 import Head from 'next/head';
 import Layout from '../../../components/Layout';
+import { convertQueryValue } from '../../../util/context';
 
 export default function SingleUserWithCourses(props) {
   return (
@@ -34,7 +35,7 @@ export default function SingleUserWithCourses(props) {
 export async function getServerSideProps(context) {
   // The name inside the square brackets of the filename
   // is inside of the `context.query` object
-  const userId = context.query.userId;
+  const userId = convertQueryValue(context.query.userId);
   console.log('userId', userId);
 
   // console.log('cookies', context.req.cookies);

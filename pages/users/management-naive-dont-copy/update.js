@@ -1,5 +1,6 @@
 import Head from 'next/head';
 import Layout from '../../../components/Layout';
+import { convertQueryValue } from '../../../util/context';
 
 // DO NOT COPY
 export default function UpdateDontCopy(props) {
@@ -35,7 +36,7 @@ export default function UpdateDontCopy(props) {
 export async function getServerSideProps(context) {
   console.log('ctx query', context.query);
 
-  const userId = context.query.userId;
+  const userId = convertQueryValue(context.query.userId);
   const firstName = context.query.firstName;
   const lastName = context.query.lastName;
 

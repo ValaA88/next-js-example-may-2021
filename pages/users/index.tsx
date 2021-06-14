@@ -1,10 +1,14 @@
 import Head from 'next/head';
 import Link from 'next/link';
 import Layout from '../../components/Layout';
+import { User } from '../../util/types';
 
-// Props will come from getServerSide props object
-// below
-export default function Users(props) {
+type Props = {
+  users: User[];
+};
+
+// Props will come from getServerSide props object below
+export default function Users(props: Props) {
   console.log('props', props);
   return (
     <Layout>

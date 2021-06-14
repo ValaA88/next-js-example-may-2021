@@ -1,18 +1,30 @@
+import { GetServerSidePropsContext } from 'next';
 import Head from 'next/head';
 import { useState } from 'react';
 import Layout from '../../components/Layout';
+import { convertQueryValue } from '../../util/context';
 import {
   addClapByUserId,
   parseCookieValue,
   toggleFollowingUserByUserId,
 } from '../../util/cookies';
+import { User } from '../../util/types';
 
-export default function SingleUser(props) {
+type Props = {
+  // user: User | undefined;
+  user?: User;
+  following: number[];
+  claps: { id: number; claps: number }[];
+};
+
+export default function SingleUser(props: Props) {
   console.log('props', props);
   const [following, setFollowing] = useState(props.following);
 
+  const user = props.user;
+
   // Show message if user does not exist
-  if (!props.user) {
+  if (!user) {
     return (
       <Layout>
         <Head>
@@ -28,14 +40,14 @@ export default function SingleUser(props) {
     <Layout>
       <Head>
         <title>
-          {props.user.firstName} {props.user.lastName}
+          {user.firstName} {user.lastName}
         </title>
       </Head>
 
-      <h1 data-cy={`user-page-user-${props.user.id}`}>
-        {props.user.firstName} {props.user.lastName}
+      <h1 data-cy={`user-page-user-${user.id}`}>
+        {user.firstName} {user.lastName}
       </h1>
-      <div>user id: {props.user.id}</div>
+      <div>user id: {user.id}</div>
       <br />
       <button
         onClick={() => {
@@ -47,10 +59,10 @@ export default function SingleUser(props) {
 
           // Instead, use the js-cookie library
           // to set and get your cookies
-          setFollowing(toggleFollowingUserByUserId(props.user.id));
+          setFollowing(toggleFollowingUserByUserId(user.id));
         }}
       >
-        {following.includes(props.user.id) ? 'Unfollow' : 'Follow'}
+        {following.includes(user.id) ? 'Unfollow' : 'Follow'}
       </button>
       <br />
       <br />
@@ -64,7 +76,7 @@ export default function SingleUser(props) {
 
           // Instead, use the js-cookie library
           // to set and get your cookies
-          addClapByUserId(props.user.id);
+          addClapByUserId(user.id);
         }}
       >
         Clap
@@ -75,15 +87,15 @@ export default function SingleUser(props) {
         have not updated any state or anything else
         that will cause a re-render
       */}
-      {props.claps.find((user) => user.id === props.user.id)?.claps}
+      {props.claps.find(({ id }) => id === user.id)?.claps}
     </Layout>
   );
 }
 
-export async function getServerSideProps(context) {
+export async function getServerSideProps(context: GetServerSidePropsContext) {
   // The name inside the square brackets of the filename
   // is inside of the `context.query` object
-  const userId = context.query.userId;
+  const userId = convertQueryValue(context.query.userId);
   console.log('userId', userId);
 
   // console.log('cookies', context.req.cookies);

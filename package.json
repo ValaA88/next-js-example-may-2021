@@ -17,12 +17,13 @@
     "js-cookie": "^2.2.1",
     "ley": "^0.7.1",
     "next": "10.2.3",
-    "postgres": "^1.0.2",
+    "postgres": "^2.0.0-beta.5",
     "react": "17.0.2",
     "react-dom": "17.0.2"
   },
   "devDependencies": {
     "@next/eslint-plugin-next": "^10.2.2",
+    "@types/dotenv-safe": "^8.1.1",
     "@types/node": "^15.0.1",
     "@types/react": "^17.0.6",
     "@types/react-dom": "^17.0.5",

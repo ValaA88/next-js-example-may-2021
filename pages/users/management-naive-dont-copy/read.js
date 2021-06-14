@@ -1,5 +1,6 @@
 import Head from 'next/head';
 import Layout from '../../../components/Layout';
+import { convertQueryValue } from '../../../util/context';
 
 // DO NOT COPY
 export default function ReadDontCopy(props) {
@@ -35,7 +36,7 @@ export default function ReadDontCopy(props) {
 export async function getServerSideProps(context) {
   console.log('ctx query', context.query);
 
-  const userId = context.query.userId;
+  const userId = convertQueryValue(context.query.userId);
 
   const { getUserById } = await import('../../../util/database');
 

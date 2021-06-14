@@ -1,10 +1,16 @@
 import camelcaseKeys from 'camelcase-keys';
 import dotenvSafe from 'dotenv-safe';
 import postgres from 'postgres';
+import { User } from './types';
 
 // Read the PostgreSQL secret connection information
 // (host, database, username, password) from the .env file
 dotenvSafe.config();
+
+declare module globalThis {
+  // eslint-disable-next-line @typescript-eslint/naming-convention
+  let __postgresSqlClient: ReturnType<typeof postgres> | undefined;
+}
 
 // Connect only once to the database
 // https://github.com/vercel/next.js/issues/7811#issuecomment-715259370
@@ -31,16 +37,16 @@ const sql = connectOneTimeToDatabase();
 
 // Perform a first query
 export async function getUsers() {
-  const users = await sql`SELECT * FROM users`;
+  const users = await sql<User[]>`SELECT * FROM users`;
   return users.map((user) => camelcaseKeys(user));
 }
 
-export async function getUserById(id) {
+export async function getUserById(id?: number) {
   // Return undefined if userId is not parseable
   // to an integer
-  if (isNaN(parseInt(id))) return undefined;
+  if (!id) return undefined;
 
-  const users = await sql`
+  const users = await sql<[User]>`
     SELECT
       *
     FROM
@@ -51,10 +57,10 @@ export async function getUserById(id) {
   return users.map((user) => camelcaseKeys(user))[0];
 }
 
-export async function getUserByIdWithCourses(userId) {
+export async function getUserByIdWithCourses(userId?: number) {
   // Return undefined if userId is not parseable
   // to an integer
-  if (isNaN(parseInt(userId))) return undefined;
+  if (!userId) return undefined;
 
   const userCourses = await sql`
     SELECT
@@ -76,7 +82,7 @@ export async function getUserByIdWithCourses(userId) {
   return userCourses.map((user) => camelcaseKeys(user));
 }
 
-export async function insertUser(firstName, lastName) {
+export async function insertUser(firstName: string, lastName: string) {
   const users = await sql`
     INSERT INTO users
       (first_name, last_name)
@@ -87,8 +93,14 @@ export async function insertUser(firstName, lastName) {
   return users.map((user) => camelcaseKeys(user))[0];
 }
 
-export async function updateUserById(userId, firstName, lastName) {
-  const users = await sql`
+export async function updateUserById(
+  userId: number | undefined,
+  firstName: string,
+  lastName: string,
+) {
+  if (!userId) return undefined;
+
+  const users = await sql<[User]>`
     UPDATE
       users
     SET
@@ -101,8 +113,8 @@ export async function updateUserById(userId, firstName, lastName) {
   return users.map((user) => camelcaseKeys(user))[0];
 }
 
-export async function deleteUserById(id) {
-  if (isNaN(parseInt(id))) return undefined;
+export async function deleteUserById(id?: number) {
+  if (!id) return undefined;
 
   const users = await sql`
     DELETE FROM
