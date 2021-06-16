@@ -1,7 +1,11 @@
 import camelcaseKeys from 'camelcase-keys';
 import dotenvSafe from 'dotenv-safe';
 import postgres from 'postgres';
+import setPostgresDefaultsOnHeroku from './setPostgresDefaultsOnHeroku';
 import { User } from './types';
+
+setPostgresDefaultsOnHeroku()
+
 
 // Read the PostgreSQL secret connection information
 // (host, database, username, password) from the .env file
@@ -124,4 +128,5 @@ export async function deleteUserById(id?: number) {
     RETURNING *
   `;
   return users.map((user) => camelcaseKeys(user))[0];
+}
 }
