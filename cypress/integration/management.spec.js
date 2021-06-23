@@ -5,6 +5,8 @@ describe('Management Dashboard', () => {
       .should('be.visible')
       .click();
 
+    cy.get('[data-cy="users-management-first-name"]').should('be.visible');
+
     cy.visit('/register');
 
     const testId = new Date().getTime();
