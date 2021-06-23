@@ -33,7 +33,7 @@ describe('Management Dashboard', () => {
       expect(loc.pathname).to.eq(`/users/management/${id}/read`);
     });
 
-    cy.go('back').go('back');
+    cy.go('back').go('back').go('back');
     cy.get('[data-cy="users-management-read-link"]')
       .should('be.visible')
       .click();
