@@ -1,12 +1,49 @@
 const users = [
-  { first_name: 'Karl', last_name: 'Horky' },
-  { first_name: 'Janos', last_name: 'Spanyol' },
-  { first_name: 'Nicolas', last_name: 'Gadner' },
-  { first_name: 'Nicolas', last_name: 'Gadner' },
-  { first_name: 'Nicolas', last_name: 'Gadner' },
-  { first_name: 'Nicolas', last_name: 'Gadner' },
-  { first_name: 'Nicolas', last_name: 'Gadner' },
+  {
+    first_name: 'Karl',
+    last_name: 'Horky',
+    username: 'karlhorky',
+    password_hash: '23j8f9u98sajij398u9asijgio34jo4',
+  },
+  {
+    first_name: 'Janos',
+    last_name: 'Spanyol',
+    username: 'janosspanyol',
+    password_hash: '23j8f9u98sajij398u9asijgio34jo4',
+  },
+  {
+    first_name: 'Nicolas',
+    last_name: 'Gadner',
+    username: 'nicolasgadner1',
+    password_hash: '23j8f9u98sajij398u9asijgio34jo4',
+  },
+  {
+    first_name: 'Nicolas',
+    last_name: 'Gadner',
+    username: 'nicolasgadner2',
+    password_hash: '23j8f9u98sajij398u9asijgio34jo4',
+  },
+  {
+    first_name: 'Nicolas',
+    last_name: 'Gadner',
+    username: 'nicolasgadner3',
+    password_hash: '23j8f9u98sajij398u9asijgio34jo4',
+  },
+  {
+    first_name: 'Nicolas',
+    last_name: 'Gadner',
+    username: 'nicolasgadner4',
+    password_hash: '23j8f9u98sajij398u9asijgio34jo4',
+  },
+  {
+    first_name: 'Nicolas',
+    last_name: 'Gadner',
+    username: 'nicolasgadner5',
+    password_hash: '23j8f9u98sajij398u9asijgio34jo4',
+  },
 ];
+
+exports.users = users;
 
 exports.up = async function up(sql) {
   await sql`

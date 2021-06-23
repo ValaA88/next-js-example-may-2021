@@ -2,7 +2,7 @@ import camelcaseKeys from 'camelcase-keys';
 import dotenvSafe from 'dotenv-safe';
 import postgres from 'postgres';
 import setPostgresDefaultsOnHeroku from './setPostgresDefaultsOnHeroku';
-import { User } from './types';
+import { User, UserWithPasswordHash } from './types';
 
 setPostgresDefaultsOnHeroku();
 
@@ -40,7 +40,15 @@ const sql = connectOneTimeToDatabase();
 
 // Perform a first query
 export async function getUsers() {
-  const users = await sql<User[]>`SELECT * FROM users`;
+  const users = await sql<User[]>`
+    SELECT
+      id,
+      first_name,
+      last_name,
+      username
+    FROM
+      users
+  `;
   return users.map((user) => camelcaseKeys(user));
 }
 
@@ -51,11 +59,47 @@ export async function getUserById(id?: number) {
 
   const users = await sql<[User]>`
     SELECT
-      *
+      id,
+      first_name,
+      last_name,
+      username
     FROM
       users
     WHERE
       id = ${id}
+  `;
+  return users.map((user) => camelcaseKeys(user))[0];
+}
+
+export async function getUserByUsername(username?: string) {
+  // Return undefined if username is falsy
+  if (!username) return undefined;
+
+  const users = await sql<[User]>`
+    SELECT
+      id,
+      first_name,
+      last_name,
+      username
+    FROM
+      users
+    WHERE
+      username = ${username}
+  `;
+  return users.map((user) => camelcaseKeys(user))[0];
+}
+
+export async function getUserWithPasswordHashByUsername(username?: string) {
+  // Return undefined if username is falsy
+  if (!username) return undefined;
+
+  const users = await sql<[UserWithPasswordHash]>`
+    SELECT
+      *
+    FROM
+      users
+    WHERE
+      username = ${username}
   `;
   return users.map((user) => camelcaseKeys(user))[0];
 }
@@ -85,13 +129,22 @@ export async function getUserByIdWithCourses(userId?: number) {
   return userCourses.map((user) => camelcaseKeys(user));
 }
 
-export async function insertUser(firstName: string, lastName: string) {
+export async function insertUser(
+  firstName: string,
+  lastName: string,
+  username: string,
+  passwordHash: string,
+) {
   const users = await sql`
     INSERT INTO users
-      (first_name, last_name)
+      (first_name, last_name, username, password_hash)
     VALUES
-      (${firstName}, ${lastName})
-    RETURNING *
+      (${firstName}, ${lastName}, ${username}, ${passwordHash})
+    RETURNING
+      id,
+      first_name,
+      last_name,
+      username
   `;
   return users.map((user) => camelcaseKeys(user))[0];
 }
@@ -111,7 +164,11 @@ export async function updateUserById(
       last_name = ${lastName}
     WHERE
       id = ${userId}
-    RETURNING *
+    RETURNING
+      id,
+      first_name,
+      last_name,
+      username
   `;
   return users.map((user) => camelcaseKeys(user))[0];
 }
@@ -124,7 +181,11 @@ export async function deleteUserById(id?: number) {
       users
     WHERE
       id = ${id}
-    RETURNING *
+    RETURNING
+      id,
+      first_name,
+      last_name,
+      username
   `;
   return users.map((user) => camelcaseKeys(user))[0];
 }
