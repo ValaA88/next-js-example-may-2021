@@ -44,7 +44,7 @@ export default function Register() {
           <label>
             firstName:
             <input
-              data-cy="users-management-create-first-name"
+              data-cy="register-first-name"
               value={firstName}
               onChange={(event) => {
                 setFirstName(event.currentTarget.value);
@@ -57,7 +57,7 @@ export default function Register() {
           <label>
             lastName:
             <input
-              data-cy="users-management-create-last-name"
+              data-cy="register-last-name"
               value={lastName}
               onChange={(event) => {
                 setLastName(event.currentTarget.value);
@@ -70,7 +70,7 @@ export default function Register() {
           <label>
             username:
             <input
-              data-cy="users-management-create-username"
+              data-cy="register-username"
               value={username}
               onChange={(event) => {
                 setUsername(event.currentTarget.value);
@@ -83,7 +83,7 @@ export default function Register() {
           <label>
             password:
             <input
-              data-cy="users-management-create-password"
+              data-cy="register-password"
               value={password}
               type="password"
               onChange={(event) => {

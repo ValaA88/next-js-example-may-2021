@@ -5,16 +5,18 @@ describe('Management Dashboard', () => {
       .should('be.visible')
       .click();
 
+    cy.visit('/register');
+
     const testId = new Date().getTime();
     const userFirstName = `test user first name ${testId}`;
     const userLastName = `test user first name ${testId}`;
+    const userUsername = `test-user-username-${testId}`;
+    const userPassword = `test-user-password-${testId}`;
 
-    cy.get('[data-cy="users-management-create-first-name"]').type(
-      userFirstName,
-    );
-    cy.get('[data-cy="users-management-create-last-name"]').type(
-      userLastName + '{enter}',
-    );
+    cy.get('[data-cy="register-first-name"]').type(userFirstName);
+    cy.get('[data-cy="register-last-name"]').type(userLastName);
+    cy.get('[data-cy="register-username"]').type(userUsername);
+    cy.get('[data-cy="register-password"]').type(userPassword + '{enter}');
 
     cy.get('[data-cy="users-management-read-page-h1"]').should('be.visible');
 
