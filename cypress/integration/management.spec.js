@@ -13,6 +13,8 @@ describe('Management Dashboard', () => {
     const userUsername = `test-user-username-${testId}`;
     const userPassword = `test-user-password-${testId}`;
 
+    cy.get('form').should('be.visible');
+
     cy.get('[data-cy="register-first-name"]')
       .should('be.visible')
       .type(userFirstName);
