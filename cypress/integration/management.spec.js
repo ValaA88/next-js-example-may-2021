@@ -5,7 +5,9 @@ describe('Management Dashboard', () => {
       .should('be.visible')
       .click();
 
-    cy.get('[data-cy="users-management-first-name"]').should('be.visible');
+    cy.get('[data-cy="users-management-create-first-name"]').should(
+      'be.visible',
+    );
 
     cy.visit('/register');
 
