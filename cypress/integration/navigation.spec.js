@@ -14,8 +14,8 @@ describe('Can navigate around pages', () => {
     //
     // This is considered bad practice - usually you want
     // to verify that you have the data first
-    cy.get('[data-cy="users-page-user-4"]').click();
-    cy.get('[data-cy="user-page-user-4"]').should('be.visible');
+    cy.get('[data-cy="users-page-user-8"]').click();
+    cy.get('[data-cy="user-page-user-8"]').should('be.visible');
 
     // Another flaky test (if user 999 did exist, this breaks)
     cy.visit('/users/999');
