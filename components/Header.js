@@ -21,7 +21,7 @@ const headerStyles = css`
   }
 `;
 
-export default function Header() {
+export default function Header(props) {
   const [darkMode, setDarkMode] = useState();
 
   // Set initial value (for client-side way of
@@ -47,8 +47,18 @@ export default function Header() {
         <Link href="/users">
           <a data-cy="header-users-link">Users</a>
         </Link>
+        {props.username ? (
+          <Link href="/logout">
+            <a>Logout</a>
+          </Link>
+        ) : (
+          <Link href="/login">
+            <a>Login</a>
+          </Link>
+        )}
       </div>
       <div>
+        {props.username && `logged in as ${props.username}`} &nbsp;
         <button onClick={() => setDarkMode(!darkMode)}>
           turn dark mode {darkMode ? 'off' : 'on'}
         </button>

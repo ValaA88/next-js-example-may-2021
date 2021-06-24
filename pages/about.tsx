@@ -1,9 +1,13 @@
 import Head from 'next/head';
 import Layout from '../components/Layout';
 
-export default function About() {
+type Props = {
+  username: string;
+};
+
+export default function About(props: Props) {
   return (
-    <Layout>
+    <Layout username={props.username}>
       <Head>
         <title>About</title>
       </Head>

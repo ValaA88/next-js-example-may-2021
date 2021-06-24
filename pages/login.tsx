@@ -1,17 +1,24 @@
+import { GetServerSidePropsContext } from 'next';
 import Head from 'next/head';
 import { useRouter } from 'next/router';
 import { useState } from 'react';
 import Layout from '../components/Layout';
+import { getValidSessionByToken } from '../util/database';
 import { LoginResponse } from './api/login';
 
-export default function Login() {
+type Props = {
+  refreshUsername: () => void;
+  username?: string;
+};
+
+export default function Login(props: Props) {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const router = useRouter();
 
   return (
-    <Layout>
+    <Layout username={props.username}>
       <Head>
         <title>Login</title>
       </Head>
@@ -41,6 +48,8 @@ export default function Login() {
             setError(json.errors[0].message);
             return;
           }
+
+          props.refreshUsername();
 
           // Navigate to the user's page when
           // they have been successfully created
@@ -80,4 +89,26 @@ export default function Login() {
       </form>
     </Layout>
   );
+}
+
+export async function getServerSideProps(context: GetServerSidePropsContext) {
+  const sessionToken = context.req.cookies.sessionToken;
+
+  const session = await getValidSessionByToken(sessionToken);
+
+  if (session) {
+    // Redirect the user when they have a session
+    // token by returning an object with the `redirect` prop
+    // https://nextjs.org/docs/basic-features/data-fetching#getserversideprops-server-side-rendering
+    return {
+      redirect: {
+        destination: `/users/management/${session.userId}/read`,
+        permanent: false,
+      },
+    };
+  }
+
+  return {
+    props: {},
+  };
 }

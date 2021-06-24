@@ -8,7 +8,7 @@ const containerStyles = css`
 export default function Layout(props) {
   return (
     <>
-      <Header />
+      <Header username={props.username} />
       <div css={containerStyles}>{props.children}</div>
     </>
   );

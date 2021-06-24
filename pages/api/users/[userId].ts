@@ -6,7 +6,7 @@ import {
   updateUserById,
 } from '../../../util/database';
 
-export default async function SingleUser(
+export default async function singleUserHandler(
   req: NextApiRequest,
   res: NextApiResponse,
 ) {

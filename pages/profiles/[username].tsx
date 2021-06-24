@@ -5,6 +5,7 @@ import { ApplicationError, User } from '../../util/types';
 
 type Props = {
   user?: User;
+  username?: string;
   errors?: ApplicationError[];
 };
 
@@ -13,7 +14,7 @@ export default function SingleUserProfile(props: Props) {
   const errors = props.errors;
   if (errors) {
     return (
-      <Layout>
+      <Layout username={props.username}>
         <Head>
           <title>Error</title>
         </Head>
@@ -25,7 +26,7 @@ export default function SingleUserProfile(props: Props) {
   // Show message if user does not exist
   if (!props.user) {
     return (
-      <Layout>
+      <Layout username={props.username}>
         <Head>
           <title>User not found!</title>
         </Head>
@@ -35,7 +36,7 @@ export default function SingleUserProfile(props: Props) {
   }
 
   return (
-    <Layout>
+    <Layout username={props.username}>
       <Head>
         <title>
           Profile page for {props.user.firstName} {props.user.lastName}
