@@ -89,6 +89,8 @@ export function createSerializedSessionTokenCookie(token: string) {
 
     path: '/',
 
+    // Be explicit about new default behavior
+    // in browsers
     // https://web.dev/samesite-cookies-explained/
     sameSite: 'lax',
   });
