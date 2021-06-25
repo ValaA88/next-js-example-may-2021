@@ -2,7 +2,7 @@ import camelcaseKeys from 'camelcase-keys';
 import dotenvSafe from 'dotenv-safe';
 import postgres from 'postgres';
 import setPostgresDefaultsOnHeroku from './setPostgresDefaultsOnHeroku';
-import { Session, User, UserWithPasswordHash } from './types';
+import { ApplicationError, Session, User, UserWithPasswordHash } from './types';
 
 setPostgresDefaultsOnHeroku();
 
@@ -52,6 +52,41 @@ export async function getUsers() {
   return users.map((user) => camelcaseKeys(user));
 }
 
+// Secure version of getUsers which
+// allows ANY authenticated user
+// to view ALL users
+export async function getUsersIfValidSessionToken(token?: string) {
+  // Security: Return "Access denied" error if falsy token passed
+  if (!token) {
+    const errors: ApplicationError[] = [{ message: 'Access denied' }];
+    return errors;
+  }
+
+  const session = await getValidSessionByToken(token);
+
+  // Security: Return "Access denied" token does not
+  // match valid session
+  if (!session) {
+    const errors: ApplicationError[] = [{ message: 'Access denied' }];
+    return errors;
+  }
+
+  // Security: Now this query has been protected
+  // and it will only run in case the user has a
+  // token corresponding to a valid session
+  const users = await sql<User[]>`
+    SELECT
+      id,
+      first_name,
+      last_name,
+      username
+    FROM
+      users
+  `;
+
+  return users.map((user) => camelcaseKeys(user));
+}
+
 export async function getUserById(id?: number) {
   // Return undefined if userId is not parseable
   // to an integer
@@ -71,11 +106,32 @@ export async function getUserById(id?: number) {
   return users.map((user) => camelcaseKeys(user))[0];
 }
 
-export async function getUserByUsername(username?: string) {
+export async function getUserByUsernameAndToken(
+  username?: string,
+  token?: string,
+) {
+  // Security: If the user is not logged in, we do not allow
+  // access and return an error from the database function
+  if (!token) {
+    const errors: ApplicationError[] = [{ message: 'Access denied' }];
+    return errors;
+  }
+
   // Return undefined if username is falsy
+  // (for example, an undefined or '' value for the username)
   if (!username) return undefined;
 
-  const users = await sql<[User]>`
+  // Security: Retrieve user via the session token
+  const userFromSession = await getUserByValidSessionToken(token);
+
+  // If there is either:
+  // - no valid session matching the token
+  // - no user matching the valid session
+  // ...return undefined
+  if (!userFromSession) return undefined;
+
+  // Retrieve all matching users from database
+  const users = await sql<[User | undefined]>`
     SELECT
       id,
       first_name,
@@ -86,7 +142,19 @@ export async function getUserByUsername(username?: string) {
     WHERE
       username = ${username}
   `;
-  return users.map((user) => camelcaseKeys(user))[0];
+
+  // If we have no user, then return undefined
+  const user = users[0];
+  if (!user) return undefined;
+
+  // Security: Match ids of session user with user
+  // corresponding to requested username
+  if (user.id !== userFromSession.id) {
+    const errors: ApplicationError[] = [{ message: 'Access denied' }];
+    return errors;
+  }
+
+  return camelcaseKeys(user);
 }
 
 export async function getUserWithPasswordHashByUsername(username?: string) {

@@ -2,6 +2,7 @@ import { GetServerSidePropsContext } from 'next';
 import Head from 'next/head';
 import Layout from '../../components/Layout';
 import { ApplicationError, User } from '../../util/types';
+import { SingleUserResponseType } from '../api/users-by-username/[username]';
 
 type Props = {
   user?: User;
@@ -59,21 +60,43 @@ export default function SingleUserProfile(props: Props) {
 }
 
 export async function getServerSideProps(context: GetServerSidePropsContext) {
-  // TODO: Verify the user's token (from the cookie) and
-  // retrieve the user that matches the token
-
-  // TODO: Test if the token user's username matches the username in the URL
-
   // API design here is not so great, maybe don't copy
-  const response = await fetch(
-    `${process.env.API_BASE_URL}/users-by-username/${context.query.username}`,
-  );
-  const { user } = await response.json();
-  console.log('API decoded JSON from response', user);
+  const response =
+    // Since we're fetching on the server side,
+    // the browser is not a part of this `fetch`
+    // and it is therefore not sending the cookies along
+    //
+    // This is using the node-fetch library
+    // internally
+    await fetch(
+      `${process.env.API_BASE_URL}/users-by-username/${context.query.username}`,
+      {
+        method: 'GET',
+        headers: {
+          // This forwards the cookie to the API route
+          cookie: context.req.headers.cookie || '',
+        },
+      },
+    );
+
+  const json = (await response.json()) as SingleUserResponseType;
+
+  console.log('API decoded JSON from response', json);
+
+  if ('errors' in json) {
+    // Better would be to return the status code
+    // in the error itself
+    context.res.statusCode = 403;
+  } else if (!json.user) {
+    // Return a proper status code for a response
+    // with a null user (which indicates it has
+    // not been found in the database)
+    context.res.statusCode = 404;
+  }
 
   return {
     props: {
-      user: user,
+      ...json,
     },
   };
 }
