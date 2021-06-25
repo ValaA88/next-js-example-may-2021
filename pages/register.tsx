@@ -3,11 +3,14 @@ import Head from 'next/head';
 import { useRouter } from 'next/router';
 import { useState } from 'react';
 import Layout from '../components/Layout';
+import { generateCsrfSecretByToken } from '../util/auth';
 import { getValidSessionByToken } from '../util/database';
+import { RegisterResponse } from './api/register';
 
 type Props = {
   refreshUsername: () => void;
   username: string;
+  csrfToken: string;
 };
 
 export default function Register(props: Props) {
@@ -15,6 +18,7 @@ export default function Register(props: Props) {
   const [lastName, setLastName] = useState('');
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
+  const [error, setError] = useState('');
   const router = useRouter();
 
   return (
@@ -38,15 +42,21 @@ export default function Register(props: Props) {
               lastName: lastName,
               username: username,
               password: password,
+              csrfToken: props.csrfToken,
             }),
           });
-          const { user: createdUser } = await response.json();
+          const json = (await response.json()) as RegisterResponse;
+
+          if ('errors' in json) {
+            setError(json.errors[0].message);
+            return;
+          }
 
           props.refreshUsername();
 
           // Navigate to the user's page when
           // they have been successfully created
-          router.push(`/users/management/${createdUser.id}/read`);
+          router.push(`/users/management/${json.user.id}/read`);
         }}
       >
         <div>
@@ -103,16 +113,29 @@ export default function Register(props: Props) {
         </div>
 
         <button>Register</button>
+
+        <div style={{ color: 'red' }}>{error}</div>
       </form>
     </Layout>
   );
 }
 
 export async function getServerSideProps(context: GetServerSidePropsContext) {
+  // eslint-disable-next-line unicorn/prefer-node-protocol
+  const crypto = await import('crypto');
+  const { createSerializedRegisterSessionTokenCookie } = await import(
+    '../util/cookies'
+  );
+  const { insertFiveMinuteSessionWithoutUserId, deleteExpiredSessions } =
+    await import('../util/database');
+
+  // Import and initialize the `csrf` library
+  const Tokens = await (await import('csrf')).default;
+  const tokens = new Tokens();
+
+  // Get session information if user is already logged in
   const sessionToken = context.req.cookies.sessionToken;
-
   const session = await getValidSessionByToken(sessionToken);
-
   if (session) {
     // Redirect the user when they have a session
     // token by returning an object with the `redirect` prop
@@ -125,7 +148,30 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
     };
   }
 
+  await deleteExpiredSessions();
+
+  // Generate 5-minute short-lived session, only for the registration
+  const shortLivedSession = await insertFiveMinuteSessionWithoutUserId(
+    crypto.randomBytes(64).toString('base64'),
+  );
+
+  // Set new cookie for the short-lived session
+  const cookie = createSerializedRegisterSessionTokenCookie(
+    shortLivedSession.token,
+  );
+  context.res.setHeader('Set-Cookie', cookie);
+
+  // Use token from short-lived session to generate
+  // secret for the CSRF token
+  const csrfSecret = generateCsrfSecretByToken(shortLivedSession.token);
+
+  // Create CSRF token
+  const csrfToken = tokens.create(csrfSecret);
+
   return {
-    props: {},
+    props: {
+      // Pass CSRF Token via props
+      csrfToken,
+    },
   };
 }
