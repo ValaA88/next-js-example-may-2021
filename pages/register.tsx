@@ -121,6 +121,20 @@ export default function Register(props: Props) {
 }
 
 export async function getServerSideProps(context: GetServerSidePropsContext) {
+  // Redirect from HTTP to HTTPS on Heroku
+  if (
+    context.req.headers.host &&
+    context.req.headers['x-forwarded-proto'] &&
+    context.req.headers['x-forwarded-proto'] !== 'https'
+  ) {
+    return {
+      redirect: {
+        destination: `https://${context.req.headers.host}/register`,
+        permanent: true,
+      },
+    };
+  }
+
   // eslint-disable-next-line unicorn/prefer-node-protocol
   const crypto = await import('crypto');
   const { createSerializedRegisterSessionTokenCookie } = await import(
