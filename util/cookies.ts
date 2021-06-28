@@ -41,7 +41,7 @@ export function getClapsCookieValue() {
 }
 
 export function addClapByUserId(userId: number) {
-  const newCookieValue = [...getClapsCookieValue()];
+  const newCookieValue = getClapsCookieValue();
 
   const clapUserInCookie = newCookieValue.find((user) => user.id === userId);
 
