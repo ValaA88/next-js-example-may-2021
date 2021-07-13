@@ -13,7 +13,9 @@ exports.up = async function up(sql) {
 };
 
 exports.down = async function down(sql) {
+  for (const user of users) {
   await sql`
     INSERT INTO users ${sql(users, 'first_name', 'last_name')}
   `;
+  }
 };
